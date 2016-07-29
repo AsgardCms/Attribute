@@ -24,7 +24,7 @@ class CreateAttributeAttributesTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('attribute_attribute_values', function (Blueprint $table) {
+        Schema::create('attribute__attribute_values', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('attribute_id')->unsigned();
@@ -46,7 +46,7 @@ class CreateAttributeAttributesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('attribute_attribute_values');
+        Schema::drop('attribute__attribute_values');
         Schema::drop('attribute__attributes');
     }
 }

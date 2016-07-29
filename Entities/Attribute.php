@@ -23,6 +23,11 @@ class Attribute extends Model
         'has_translatable_values',
     ];
 
+    public function values()
+    {
+        return $this->hasMany(Value::class);
+    }
+
     /**
      * @param $options
      */

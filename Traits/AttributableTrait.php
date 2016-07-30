@@ -2,6 +2,7 @@
 
 namespace Modules\Attribute\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
 use Modules\Attribute\Entities\Attribute;
 
 trait AttributableTrait
@@ -42,6 +43,17 @@ trait AttributableTrait
     public static function createAttributesModel()
     {
         return new static::$attributesModel;
+    }
+
+    public function findAttribute($attribute)
+    {
+        dd($this->values()->attribute()->where('key', 'meta_title'));
+        return $this->whereHas('values', function (Builder $query) {
+            $query->where('attribute_id', 1);
+//            $query->whereHas('attribute', function (Builder $query) {
+//                $query->where('key', 'meta-title');
+//            });
+        })->first();
     }
 
     public function setAttributes(array $attributes = [])

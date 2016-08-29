@@ -22,7 +22,7 @@ class CacheAttributeDecorator extends BaseCacheDecorator implements AttributeRep
     public function findByNamespace($namespace)
     {
         return $this->cache
-            ->tags($this->entityName, 'global')
+            ->tags([$this->entityName, 'global'])
             ->remember("{$this->locale}.{$this->entityName}.findByNamespace.{$namespace}", $this->cacheTime,
                 function () use ($namespace) {
                     return $this->repository->findByNamespace($namespace);
@@ -38,7 +38,7 @@ class CacheAttributeDecorator extends BaseCacheDecorator implements AttributeRep
     public function findTranslatableByNamespace($namespace)
     {
         return $this->cache
-            ->tags($this->entityName, 'global')
+            ->tags([$this->entityName, 'global'])
             ->remember("{$this->locale}.{$this->entityName}.findTranslatableByNamespace.{$namespace}", $this->cacheTime,
                 function () use ($namespace) {
                     return $this->repository->findTranslatableByNamespace($namespace);

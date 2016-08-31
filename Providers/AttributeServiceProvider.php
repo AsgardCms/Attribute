@@ -62,6 +62,7 @@ class AttributeServiceProvider extends ServiceProvider
     {
         $this->publishConfig('attribute', 'permissions');
         $this->registerBladeTags();
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 
     /**

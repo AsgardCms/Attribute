@@ -40,11 +40,9 @@ abstract class BaseTestCase extends TestCase
 
     private function resetDatabase()
     {
-        $migrationsPath = 'Database/Migrations';
         // Makes sure the migrations table is created
         $this->artisan('migrate', [
             '--database' => 'sqlite',
-            '--path'     => $migrationsPath,
         ]);
         // We empty all tables
         $this->artisan('migrate:reset', [
@@ -53,7 +51,6 @@ abstract class BaseTestCase extends TestCase
         // Migrate
         $this->artisan('migrate', [
             '--database' => 'sqlite',
-            '--path'     => $migrationsPath,
         ]);
     }
 }

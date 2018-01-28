@@ -2,8 +2,8 @@
     {!! Form::label($attribute->name, $attribute->name) !!}
 
     <?php foreach ($attribute->options as $key => $option): ?>
-    <label class="checkbox">
-        <input type="checkbox" name="attributes[{{ $attribute->key }}][]" class="flat-blue"
+    <label class="radio">
+        <input type="radio" name="attributes[{{ $attribute->key }}][]" class="flat-blue"
                value="{{ $key }}" {{ $entity->findAttributeValue($attribute->key, $key) ? 'checked' : '' }}>
         {{ $option[locale()] }}
     </label>

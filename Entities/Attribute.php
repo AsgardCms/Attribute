@@ -25,7 +25,7 @@ class Attribute extends Model
 
     public function values()
     {
-        return $this->hasMany(Value::class);
+        return $this->hasMany(AttributeValue::class);
     }
 
     /**
@@ -33,7 +33,10 @@ class Attribute extends Model
      */
     public function setOptionsAttribute($options)
     {
-        $this->attributes['options'] = count($options) > 1 ? json_encode($options) : '';
+        $filtered = collect($options)->filter(function ($value, $key) {
+            return !!$key;
+        });
+        $this->attributes['options'] = $filtered->isNotEmpty() ? $filtered->toJson() : '';
     }
 
     /**

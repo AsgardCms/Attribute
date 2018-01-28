@@ -50,7 +50,6 @@
             <div class="box box-primary">
                 <div class="box-body">
                     {!! Form::normalCheckbox('is_enabled', trans('attribute::attributes.is_enabled'), $errors) !!}
-                    {!! Form::normalCheckbox('has_translatable_values', trans('attribute::attributes.has_translatable_values'), $errors) !!}
                     {!! Form::normalInput('key', trans('attribute::attributes.key'), $errors) !!}
                     <div class="form-group {{ $errors->has('namespace') ? 'has-error' : '' }}">
                         {!! Form::label('namespace', trans('attribute::attributes.namespace')) !!}
@@ -81,6 +80,10 @@
                                     @endforeach
                                 </select>
                                 {!! $errors->first('type', '<span class="help-block">:message</span>') !!}
+                            </div>
+
+                            <div class="noOptionsArea">
+                                {!! Form::normalCheckbox('has_translatable_values', trans('attribute::attributes.has_translatable_values'), $errors) !!}
                             </div>
                         </div>
                         <div class="col-md-6" style="margin-top: 25px">
@@ -127,6 +130,12 @@
                 checkboxClass: 'icheckbox_flat-blue',
                 radioClass: 'iradio_flat-blue'
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // fire select event to apply current selection
+            $('.jsTypeSelection').change();
         });
     </script>
 @stop

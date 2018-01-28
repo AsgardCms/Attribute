@@ -59,7 +59,7 @@ final class TranslatableAttributesDirective
     {
         $namespace = $this->namespace;
         $locale = $this->locale;
-        $view = $view ?: 'attribute::admin.blade.translatable-form';
+        $view = $view ?: 'attribute::admin.blade.form';
 
         $form = '';
 

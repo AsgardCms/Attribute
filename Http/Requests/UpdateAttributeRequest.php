@@ -10,7 +10,7 @@ final class UpdateAttributeRequest extends BaseFormRequest
     {
         return [
             'namespace' => 'required',
-            'key' => 'required',
+            'key' => 'required|unique:attribute__attributes,key,'.$this->route('attribute')->getKey().',id,namespace,'.$this->get('namespace'),
             'type' => 'required',
         ];
     }
@@ -25,6 +25,13 @@ final class UpdateAttributeRequest extends BaseFormRequest
     public function authorize()
     {
         return true;
+    }
+
+    public function messages()
+    {
+        return [
+            'key.unique' => trans('attribute::attributes.key already exists'),
+        ];
     }
 
     public function translationMessages()

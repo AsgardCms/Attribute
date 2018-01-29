@@ -2,6 +2,7 @@
 
 namespace Modules\Attribute\Tests;
 
+use Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider;
 use Modules\Attribute\Providers\AttributeServiceProvider;
 use Modules\Core\Providers\CoreServiceProvider;
 use Nwidart\Modules\LaravelModulesServiceProvider;
@@ -22,6 +23,7 @@ abstract class BaseTestCase extends TestCase
             LaravelModulesServiceProvider::class,
             CoreServiceProvider::class,
             AttributeServiceProvider::class,
+            LaravelLocalizationServiceProvider::class,
         ];
     }
 

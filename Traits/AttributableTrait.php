@@ -32,17 +32,25 @@ trait AttributableTrait
     /**
      * {@inheritdoc}
      */
-    public function values()
+    public static function createAttributesModel()
     {
-        return $this->morphMany(AttributeValue::class, 'entity');
+        return new static::$attributesModel;
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function createAttributesModel()
+    public function attributes()
     {
-        return new static::$attributesModel;
+        return static::createAttributesModel()->where('namespace', $this->getEntityNamespace());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function values()
+    {
+        return $this->morphMany(AttributeValue::class, 'entity');
     }
 
     /**
@@ -83,11 +91,8 @@ trait AttributableTrait
     public function setAttributes(array $attributes = [])
     {
         foreach ($attributes as $key => $contents) {
-            // Find attribute by its key and namespace
-            $attribute = static::createAttributesModel()
-                                    ->where('key', $key)
-                                    ->where('namespace', $this->getEntityNamespace())
-                                    ->first();
+            // Find attribute by its key
+            $attribute = $this->attributes()->where('key', $key)->first();
             // If attribute doesn't exist, reject saving
             if ($attribute === null) {
                 continue;

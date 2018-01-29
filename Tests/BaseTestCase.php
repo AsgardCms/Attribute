@@ -2,7 +2,9 @@
 
 namespace Modules\Attribute\Tests;
 
+use Illuminate\Database\Eloquent\Model;
 use Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Modules\Attribute\Providers\AttributeServiceProvider;
 use Modules\Core\Providers\CoreServiceProvider;
 use Nwidart\Modules\LaravelModulesServiceProvider;
@@ -24,6 +26,14 @@ abstract class BaseTestCase extends TestCase
             CoreServiceProvider::class,
             AttributeServiceProvider::class,
             LaravelLocalizationServiceProvider::class,
+        ];
+    }
+
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Eloquent' => Model::class,
+            'LaravelLocalization' => LaravelLocalization::class,
         ];
     }
 

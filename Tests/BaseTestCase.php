@@ -2,6 +2,9 @@
 
 namespace Modules\Attribute\Tests;
 
+use Collective\Html\FormFacade;
+use Collective\Html\HtmlFacade;
+use Collective\Html\HtmlServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -26,6 +29,7 @@ abstract class BaseTestCase extends TestCase
             CoreServiceProvider::class,
             AttributeServiceProvider::class,
             LaravelLocalizationServiceProvider::class,
+            HtmlServiceProvider::class,
         ];
     }
 
@@ -34,6 +38,8 @@ abstract class BaseTestCase extends TestCase
         return [
             'Eloquent' => Model::class,
             'LaravelLocalization' => LaravelLocalization::class,
+            'Form' => FormFacade::class,
+            'Html' => HtmlFacade::class,
         ];
     }
 

@@ -53,4 +53,9 @@ class TestModel implements AttributesInterface
 {
     use \Modules\Core\Traits\NamespacedEntity;
     protected static $entityNamespace = 'asgardcms/page';
+
+    public function hasTranslatableAttribute()
+    {
+        return false;
+    }
 }

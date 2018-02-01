@@ -2,7 +2,7 @@ $('.selectize').selectize();
 $( document ).ready(function() {
     // $('.dd').nestable();
     $('.jsTypeSelection').on('change', function() {
-        if ($(this).find(':selected').data('allow-options') === 1) {
+        if ($(this).find(':selected').data('use-options') === 1) {
             cloneTemplate();
             $('.optionsArea').show();
             $('.noOptionsArea').hide();

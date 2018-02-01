@@ -5,5 +5,6 @@ namespace Modules\Attribute\Types;
 final class MultiSelectType extends BaseType
 {
     protected $identifier = 'multiselect';
-    protected $allowOptions = true;
+    protected $useOptions = true;
+    protected $isCollection = true;
 }

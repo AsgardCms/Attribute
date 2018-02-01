@@ -48,14 +48,28 @@ class Attribute extends Model
         return $options ? json_decode($options, true) : [];
     }
 
+    public function getTypeInstance()
+    {
+        $types = app(AttributesManager::class)->getTypes();
+        return isset($types[$this->type]) ? $types[$this->type] : null;
+    }
+
     /**
      * Check if the current attributes has options
      * @return bool
      */
-    public function hasOptions()
+    public function useOptions()
     {
-        $type = app(AttributesManager::class)->getTypes()[$this->type];
-
-        return $type->allowOptions();
+        return $this->getTypeInstance()->useOptions();
     }
+    
+    /**
+     * Check if the current attributes has options
+     * @return bool
+     */
+    public function isCollection()
+    {
+        return $this->getTypeInstance()->isCollection();
+    }
+
 }

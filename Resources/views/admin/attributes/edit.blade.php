@@ -74,7 +74,7 @@
                                 <select class="form-control jsTypeSelection" name="type" id="type">
                                     <option value="">{{ trans('attribute::attributes.select a type') }}</option>
                                     @foreach ($types as $type)
-                                        <option data-allow-options="{{ $type->allowOptions() ?: 0 }}"
+                                        <option data-use-options="{{ $type->useOptions() }}"
                                                 {{ old('type', $attribute->type) === $type->getIdentifier() ? 'selected' : null }}
                                                 value="{{ $type->getIdentifier() }}">{{  $type->getName() }}</option>
                                     @endforeach
@@ -135,6 +135,12 @@
     </script>
     <script>
         $(document).ready(function() {
+            // Set has_translatable_values to false when type allows option
+            $('select[name="type"]').change(function() {
+                if($(this).find(':selected').data('use-options') === 1) {
+                    $('[name=has_translatable_values]').removeAttr('checked');
+                }
+            });
             // fire select event to apply current selection
             $('.jsTypeSelection').change();
         });

@@ -3,8 +3,11 @@
 
     <?php foreach ($attribute->options as $key => $option): ?>
     <label class="radio">
-        <input type="radio" name="attributes[{{ $attribute->key }}][]" class="flat-blue"
-               value="{{ $key }}" {{ $entity->findAttributeValue($attribute->key, $key) ? 'checked' : '' }}>
+        <input type="radio" name="attributes[{{ $attribute->key }}][]"
+                class="flat-blue"
+                data-key="{{ $attribute->key }}"
+                data-is-collection="{{ $attribute->isCollection() }}"
+                value="{{ $key }}" {{ $entity->findAttributeValue($attribute->key, $key) ? 'checked' : '' }}>
         {{ $option[locale()] }}
     </label>
     <?php endforeach; ?>

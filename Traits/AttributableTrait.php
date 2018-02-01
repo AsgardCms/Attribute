@@ -62,7 +62,7 @@ trait AttributableTrait
     public function findAttributeValue($key, $value = null)
     {
         return $this->values()
-                    ->when($value, function ($query) use ($value) {
+                    ->when(!is_null($value), function ($query) use ($value) {
                         return $query->where('content', $value);
                     })
                     ->whereHas('attribute', function($query) use ($key) {
@@ -91,6 +91,7 @@ trait AttributableTrait
     public function setAttributes(array $attributes = [])
     {
         foreach ($attributes as $key => $contents) {
+            if(is_null($contents)) continue;
             // Find attribute by its key
             $attribute = $this->attributes()->where('key', $key)->first();
             // If attribute doesn't exist, reject saving
@@ -98,42 +99,78 @@ trait AttributableTrait
                 continue;
             }
 
-            // Remove if model has the attribute value already
-            $this->values()->where('attribute_id', $attribute->id)->delete();
+            // Get every values related to this attribute
+            $values = $this->values()->where('attribute_id', $attribute->id);
 
             // If attribute type is string
-            if(in_array($attribute->type, ['input', 'textarea'])) {
-                // Check translatable
-                if($attribute->has_translatable_values) {
-                    // Saving translations of AttributeValue
-                    $data = array();
-                    foreach($contents as $locale => $content) {
-                        $data[$locale] = [ 'content' => $content ];
+            if($attribute->useOptions()) {
+                // Treat as array if attribute type is Collection
+                if($attribute->isCollection()) {
+                    // Apply collection AttributeValue and remove rest of them
+                    $appliedIds = array();
+                    foreach($contents as $content) {
+                        $value = $this->createAttributeValue($attribute, [
+                            'content' => $content
+                        ]);
+                        $appliedIds[] = $value->getKey();
                     }
-                    $this->createAttributeValue($attribute, $data);
+                    $values->whereNotIn('id', $appliedIds)->delete();
                 }
                 else {
-                    // Saving normal string type AttributeValue
-                    $this->createAttributeValue($attribute, [
-                        'content' => $contents
-                    ]);
+                    $data = [ 'content' => $contents ];
+                    // Apply to first AttributeValue and remove rest of them
+                    if($value = $values->first()) {
+                        $value->fill($data);
+                        $value->save();
+                    }
+                    else $value = $this->createAttributeValue($attribute, $data);
+
+                    $values->whereNotIn('id', [$value->getKey()])->delete();
                 }
             }
             else {
-                // Treat as array if attribute type is Collection
-                foreach($contents as $content) {
-                    $this->createAttributeValue($attribute, [
-                        'content' => $content
-                    ]);
+                $data = array();
+                // Check translatable
+                // (This function should work only for String Type - Input, Textarea)
+                if($attribute->has_translatable_values) {
+                    // Rearrange structure of Translated Data
+                    foreach($contents as $locale => $content) {
+                        $data[$locale] = [ 'content' => $content ];
+                    }
                 }
+                else $data = [ 'content' => $contents ];
+
+                // Apply to first AttributeValue and remove rest of them
+                if($value = $values->first()) {
+                    $value->fill($data);
+                    $value->save();
+                }
+                else $value = $this->createAttributeValue($attribute, $data);
+
+                $values->whereNotIn('id', [$value->getKey()])->delete();
             }
         }
     }
 
+    /**
+     * Helper method to create AttributeValue
+     * @param  Attribute $attribute
+     * @param  array  $data
+     * @return AttributeValue
+     */
     public function createAttributeValue($attribute, array $data)
     {
-        $attributeValue = $this->values()->create($data);
-        $attributeValue->attribute_id = $attribute->id;
-        $attributeValue->save();
+        $value = new AttributeValue($data);
+        $value->attribute_id = $attribute->id;
+        $this->values()->save($value);
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasTranslatableAttribute()
+    {
+        return $this->attributes()->where('has_translatable_values', true)->count();
     }
 }

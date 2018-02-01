@@ -6,7 +6,7 @@
         data-key="{{ $attribute->key }}"
         data-is-collection="{{ $attribute->isCollection() }}">
         <?php foreach ($attribute->options as $key => $option): ?>
-        <option value="{{ $key }}" {{ $entity->findAttributeValue($attribute->key, $key) ? 'selected' : '' }}>{{ $option[locale()] }}</option>
+        <option value="{{ $key }}" {{ $entity->findAttributeValue($attribute->key, $key) ? 'selected' : '' }}>{{ $option->translate(locale())->label }}</option>
         <?php endforeach; ?>
     </select>
 

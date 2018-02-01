@@ -8,7 +8,7 @@
                 data-key="{{ $attribute->key }}"
                 data-is-collection="{{ $attribute->isCollection() }}"
                 value="{{ $key }}" {{ $entity->findAttributeValue($attribute->key, $key) ? 'checked' : '' }}>
-        {{ $option[locale()] }}
+        {{ $option->translate(locale())->label }}
     </label>
     <?php endforeach; ?>
     {!! $errors->first('attributes.' . $attribute->key, '<span class="help-block">:message</span>') !!}

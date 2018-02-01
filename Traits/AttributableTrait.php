@@ -42,7 +42,11 @@ trait AttributableTrait
      */
     public function attributes()
     {
-        return static::createAttributesModel()->where('namespace', $this->getEntityNamespace());
+        return static::createAttributesModel()->where('namespace', $this->getEntityNamespace())
+                ->with(['values' => function($query) {
+                    $query->where('entity_type', static::class);
+                    $query->where('entity_id', static::getKey());
+                }]);
     }
 
     /**
@@ -150,6 +154,14 @@ trait AttributableTrait
                 $values->whereNotIn('id', [$value->getKey()])->delete();
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAttributes()
+    {
+        return $this->values()->delete();
     }
 
     /**

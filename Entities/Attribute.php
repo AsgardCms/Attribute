@@ -18,9 +18,11 @@ class Attribute extends Model
         'namespace',
         'key',
         'type',
-        'options',
         'is_enabled',
         'has_translatable_values',
+    ];
+    protected $appends = [
+        'options'
     ];
 
     public function values()
@@ -28,15 +30,44 @@ class Attribute extends Model
         return $this->hasMany(AttributeValue::class);
     }
 
+    public function options()
+    {
+        return $this->hasMany(AttributeOption::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fill(array $attributes)
+    {
+        if (isset($attributes['options']))
+        {
+            $this->setOptions($attributes['options']);
+        }
+
+        return parent::fill($attributes);
+    }
+
     /**
      * @param $options
      */
-    public function setOptionsAttribute($options)
+    public function setOptions($options)
     {
-        $filtered = collect($options)->filter(function ($value, $key) {
-            return !!$key;
-        });
-        $this->attributes['options'] = $filtered->isNotEmpty() ? $filtered->toJson() : '';
+        $inserted_ids = [];
+        foreach ($options as $key => $values) {
+            if($key) {
+                $values['key'] = $key;
+                $option = $this->options()->where('key', $key)->first();
+                if($option) {
+                    $option->fill($values);
+                    $option->save();
+                }
+                else $option = $this->options()->create($values);
+                $inserted_ids[] = $option->getKey();
+            }
+        }
+
+        $this->options()->whereNotIn('id', $inserted_ids)->delete();
     }
 
     /**
@@ -45,7 +76,7 @@ class Attribute extends Model
      */
     public function getOptionsAttribute($options)
     {
-        return $options ? json_decode($options, true) : [];
+        return $this->options()->with('translations')->get()->keyBy('key');
     }
 
     public function getTypeInstance()
@@ -62,7 +93,7 @@ class Attribute extends Model
     {
         return $this->getTypeInstance()->useOptions();
     }
-    
+
     /**
      * Check if the current attributes has options
      * @return bool

@@ -68,7 +68,7 @@ class EloquentAttributeRepository extends EloquentBaseRepository implements Attr
             $value = $option['value'];
             unset($option['value']);
             foreach ($option as $locale => $item) {
-                $cleaned[$value][$locale] = $item['label'];
+                $cleaned[$value][$locale]['label'] = $item['label'];
             }
         }
 

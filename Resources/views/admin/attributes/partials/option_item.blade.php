@@ -7,7 +7,7 @@
                        type="text" value="{{ isset($value) ? $value : '' }}" placeholder="{{ trans('attribute::attributes.option value') }}">
             </div>
             <?php foreach (LaravelLocalization::getSupportedLocales() as $locale => $language): ?>
-            <?php $label = isset($option) ? $option[$locale] : '' ?>
+            <?php $label = isset($option) ? $option->translate($locale)->label : '' ?>
             <div class="lang-group {{ $locale }}" style="{{ $locale !== locale() ? 'display: none;' : ''}}">
                 <input class="form-control" id="label" name="options[{{$count}}][{{$locale}}][label]"
                        type="text" value="{{ $label }}" placeholder="{{ trans('attribute::attributes.option label') }}">

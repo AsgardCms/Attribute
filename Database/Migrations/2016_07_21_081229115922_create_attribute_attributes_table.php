@@ -19,7 +19,6 @@ class CreateAttributeAttributesTable extends Migration
             $table->string('namespace');
             $table->string('key');
             $table->string('type');
-            $table->text('options')->nullable();
             $table->boolean('is_enabled');
             $table->boolean('has_translatable_values');
             $table->timestamps();

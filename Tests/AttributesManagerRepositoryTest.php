@@ -21,17 +21,17 @@ final class AttributesManagerRepositoryTest extends BaseTestCase
     }
 
     /** @test */
-    public function it_initialises_empty_namespaces_array()
+    public function it_initialises_empty_entities_array()
     {
-        $this->assertEquals([], $this->attributesManager->getNamespaces());
+        $this->assertEquals([], $this->attributesManager->getEntities());
     }
 
     /** @test */
     public function it_adds_items_to_array()
     {
-        $this->attributesManager->registerNamespace(new TestModel());
+        $this->attributesManager->registerEntity(new TestModel());
 
-        $this->assertCount(1, $this->attributesManager->getNamespaces());
+        $this->assertCount(1, $this->attributesManager->getEntities());
     }
 
     /** @test */

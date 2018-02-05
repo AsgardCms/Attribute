@@ -10,7 +10,7 @@ final class CreateAttributeRequest extends BaseFormRequest
     {
         return [
             'namespace' => 'required',
-            'key' => 'required',
+            'slug' => 'required|unique:attribute__attributes,slug,NULL,id,namespace,'.$this->get('namespace'),
             'type' => 'required',
         ];
     }
@@ -25,6 +25,13 @@ final class CreateAttributeRequest extends BaseFormRequest
     public function authorize()
     {
         return true;
+    }
+
+    public function messages()
+    {
+        return [
+            'slug.unique' => trans('attribute::attributes.slug already exists'),
+        ];
     }
 
     public function translationMessages()

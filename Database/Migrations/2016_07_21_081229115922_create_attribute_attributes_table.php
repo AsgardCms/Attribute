@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateAttributeAttributesTable extends Migration
 {
@@ -16,27 +17,29 @@ class CreateAttributeAttributesTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('namespace');
-            $table->string('key');
+            $table->string('slug');
             $table->string('type');
-            $table->text('options')->nullable();
-            $table->boolean('is_enabled');
             $table->boolean('has_translatable_values');
+            $table->boolean('is_enabled');
+            $table->boolean('is_system');
             $table->timestamps();
+
+            $table->unique(['namespace', 'slug']);
         });
 
-        Schema::create('attribute__attribute_values', function (Blueprint $table) {
+        Schema::create('attribute__attribute_translations', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('attribute_id')->unsigned();
-            $table->string('entity_type');
-            $table->integer('entity_id')->unsigned();
-            $table->text('value');
-            $table->timestamps();
+            $table->string('name');
+            $table->text('description')->nullable();
 
-            $table->index('attribute_id');
-            $table->index('entity_type');
-            $table->index('entity_id');
+            $table->integer('attribute_id')->unsigned();
+            $table->string('locale')->index();
+            $table->unique(['attribute_id', 'locale']);
+            $table->foreign('attribute_id')->references('id')->on('attribute__attributes')->onDelete('cascade');
         });
+
+
     }
 
     /**
@@ -46,7 +49,7 @@ class CreateAttributeAttributesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('attribute__attribute_values');
-        Schema::drop('attribute__attributes');
+        Schema::dropIfExists('attribute__attribute_translations');
+        Schema::dropIfExists('attribute__attributes');
     }
 }

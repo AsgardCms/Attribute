@@ -30,7 +30,7 @@
 @stop
 
 @section('content')
-    {!! Form::open(['route' => ['admin.attribute.attribute.update', $attribute->id], 'method' => 'put']) !!}
+    {!! Form::open(['route' => ['admin.attribute.attribute.update', $attribute->id], 'method' => 'put', 'ng-app' => 'app']) !!}
     <div class="row">
         <div class="col-md-9">
             <div class="nav-tabs-custom">
@@ -50,11 +50,10 @@
             <div class="box box-primary">
                 <div class="box-body">
                     {!! Form:: normalCheckbox('is_enabled', trans('attribute::attributes.is_enabled'), $errors, $attribute) !!}
-                    {!! Form::normalCheckbox('has_translatable_values', trans('attribute::attributes.has_translatable_values'), $errors, $attribute) !!}
-                    {!! Form::normalInput('key', trans('attribute::attributes.key'), $errors, $attribute) !!}
+                    {!! Form::normalInput('slug', trans('attribute::attributes.slug'), $errors, $attribute, $attribute->is_system?['disabled']:[]) !!}
                     <div class="form-group {{ $errors->has('namespace') ? 'has-error' : '' }}">
                         {!! Form::label('namespace', trans('attribute::attributes.namespace')) !!}
-                        {!! Form::select('namespace', $namespaces, old('namespace', $attribute->namespace), ['class' => 'selectize']) !!}
+                        {!! Form::select('namespace', $namespaces, old('namespace', $attribute->namespace), ['class' => 'selectize', 'disabled']) !!}
                         {!! $errors->first('namespace', '<span class="help-block">:message</span>') !!}
                     </div>
                 </div>
@@ -72,16 +71,21 @@
                         <div class="col-md-6">
                             <div class="form-group {{ $errors->has('type') ? 'has-error' : '' }}">
                                 {!! Form::label('type', trans('attribute::attributes.type')) !!}
-                                <select class="form-control jsTypeSelection" name="type" id="type">
+                                <select class="form-control jsTypeSelection" name="type" id="type" {{ $attribute->is_system?'disabled':'' }}>
                                     <option value="">{{ trans('attribute::attributes.select a type') }}</option>
                                     @foreach ($types as $type)
-                                        <option data-allow-options="{{ $type->allowOptions() ?: 0 }}"
+                                        <option data-use-options="{{ $type->useOptions() }}"
                                                 {{ old('type', $attribute->type) === $type->getIdentifier() ? 'selected' : null }}
                                                 value="{{ $type->getIdentifier() }}">{{  $type->getName() }}</option>
                                     @endforeach
                                 </select>
                                 {!! $errors->first('type', '<span class="help-block">:message</span>') !!}
                             </div>
+
+                            <div class="noOptionsArea">
+                                {!! Form::normalCheckbox('has_translatable_values', trans('attribute::attributes.has_translatable_values'), $errors, $attribute) !!}
+                            </div>
+
                         </div>
                         <div class="col-md-6" style="margin-top: 25px">
                             @include('attribute::admin.attributes.partials.options_create')
@@ -90,7 +94,6 @@
                 </div>
                 <div class="box-footer">
                     <button type="submit" class="btn btn-primary btn-flat">{{ trans('core::core.button.update') }}</button>
-                    <button class="btn btn-default btn-flat" name="button" type="reset">{{ trans('core::core.button.reset') }}</button>
                     <a class="btn btn-danger pull-right btn-flat" href="{{ route('admin.attribute.attribute.index')}}"><i class="fa fa-times"></i> {{ trans('core::core.button.cancel') }}</a>
                 </div>
             </div>
@@ -129,4 +132,17 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            // Set has_translatable_values to false when type allows option
+            $('select[name="type"]').change(function() {
+                if($(this).find(':selected').data('use-options') === 1) {
+                    $('[name=has_translatable_values]').removeAttr('checked');
+                }
+            });
+            // fire select event to apply current selection
+            $('.jsTypeSelection').change();
+        });
+    </script>
 @stop
+@include('attribute::admin.attributes.partials.form-angular')

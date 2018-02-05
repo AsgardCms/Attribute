@@ -47,7 +47,7 @@ class AttributeController extends AdminBaseController
      */
     public function create()
     {
-        $namespaces = $this->formatNamespaces($this->attributesManager->getNamespaces());
+        $namespaces = $this->formatNamespaces($this->attributesManager->getEntities());
         $types = $this->attributesManager->getTypes();
 
         return view('attribute::admin.attributes.create', compact('namespaces', 'types'));
@@ -75,7 +75,7 @@ class AttributeController extends AdminBaseController
      */
     public function edit(Attribute $attribute)
     {
-        $namespaces = $this->formatNamespaces($this->attributesManager->getNamespaces());
+        $namespaces = $this->formatNamespaces($this->attributesManager->getEntities());
         $types = $this->attributesManager->getTypes();
 
         return view('attribute::admin.attributes.edit', compact('attribute', 'namespaces', 'types'));
@@ -110,11 +110,11 @@ class AttributeController extends AdminBaseController
             ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('attribute::attributes.attributes')]));
     }
 
-    private function formatNamespaces(array $namespaces)
+    private function formatNamespaces(array $entities)
     {
         $new = [];
-        foreach ($namespaces as $namespace) {
-            $new[$namespace] = $namespace;
+        foreach ($entities as $namespace => $entity) {
+            $new[$namespace] = $entity->getEntityName();
         }
 
         return $new;

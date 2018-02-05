@@ -4,7 +4,6 @@ namespace Modules\Attribute\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Modules\Attribute\Blade\AttributesDirective;
-use Modules\Attribute\Blade\TranslatableAttributesDirective;
 use Modules\Attribute\Entities\Attribute;
 use Modules\Attribute\Normalisers\AttributeOptionsNormaliser;
 use Modules\Attribute\Repositories\AttributeRepository;
@@ -53,9 +52,6 @@ class AttributeServiceProvider extends ServiceProvider
         $this->app->bind('attribute.attributes.directive', function ($app) {
             return new AttributesDirective($app[AttributeRepository::class], $app[AttributesManager::class]);
         });
-        $this->app->bind('attribute.translatable.attributes.directive', function ($app) {
-            return new TranslatableAttributesDirective($app[AttributeRepository::class], $app[AttributesManager::class]);
-        });
     }
 
     public function boot()
@@ -98,10 +94,7 @@ class AttributeServiceProvider extends ServiceProvider
             return;
         }
         $this->app['blade.compiler']->directive('attributes', function ($value) {
-            return "<?php echo AttributesDirective::show(array$value); ?>";
-        });
-        $this->app['blade.compiler']->directive('translatableAttributes', function ($value) {
-            return "<?php echo TranslatableAttributesDirective::show(array$value); ?>";
+            return "<?php echo AttributesDirective::show([$value]); ?>";
         });
     }
 }

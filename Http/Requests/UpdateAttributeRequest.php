@@ -9,9 +9,8 @@ final class UpdateAttributeRequest extends BaseFormRequest
     public function rules()
     {
         return [
-            'namespace' => 'required',
-            'key' => 'required',
             'type' => 'required',
+            'slug' => 'required|unique:attribute__attributes,slug,'.$this->route('attribute')->getKey().',id,namespace,'.$this->get('namespace'),
         ];
     }
 
@@ -25,6 +24,14 @@ final class UpdateAttributeRequest extends BaseFormRequest
     public function authorize()
     {
         return true;
+    }
+
+    public function messages()
+    {
+        return [
+            'type.required' => trans('attribute::attributes.type is required'),
+            'slug.unique' => trans('attribute::attributes.slug already exists'),
+        ];
     }
 
     public function translationMessages()

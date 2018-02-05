@@ -2,8 +2,8 @@
     {!! Form::label($attribute->name, $attribute->name) !!}
 
     <?php foreach ($attribute->options as $key => $option): ?>
-    <label class="checkbox">
-        <input type="checkbox" name="attributes[{{ $attribute->slug }}][]"
+    <label class="radio">
+        <input type="radio" name="attributes[{{ $attribute->slug }}]"
                 class="flat-blue"
                 data-slug="{{ $attribute->slug }}"
                 data-is-collection="{{ $attribute->isCollection() }}"

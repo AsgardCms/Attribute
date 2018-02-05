@@ -28,12 +28,13 @@
                     <table class="data-table table table-bordered table-hover">
                         <thead>
                         <tr>
-                            <th>{{ trans('attribute::attributes.name') }}</th>
-                            <th>{{ trans('attribute::attributes.key') }}</th>
-                            <th>{{ trans('attribute::attributes.type') }}</th>
-                            <th>{{ trans('attribute::attributes.namespace') }}</th>
-                            <th>{{ trans('attribute::attributes.has_translatable_values') }}</th>
-                            <th data-sortable="false">{{ trans('core::core.table.actions') }}</th>
+                            <th width="10%">{{ trans('attribute::attributes.namespace') }}</th>
+                            <th width="10%">{{ trans('attribute::attributes.slug') }}</th>
+                            <th width="20%">{{ trans('attribute::attributes.name') }}</th>
+                            <th width="10%">{{ trans('attribute::attributes.type') }}</th>
+                            <th width="10%">{{ trans('attribute::attributes.is_system') }}</th>
+                            <th width="10%">{{ trans('attribute::attributes.is_enabled') }}</th>
+                            <th width="10%" data-sortable="false">{{ trans('core::core.table.actions') }}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -42,12 +43,17 @@
                         <tr>
                             <td>
                                 <a href="{{ route('admin.attribute.attribute.edit', [$attribute->id]) }}">
-                                    {{ $attribute->name }}
+                                    {{ $attribute->getEntityName() }}
                                 </a>
                             </td>
                             <td>
                                 <a href="{{ route('admin.attribute.attribute.edit', [$attribute->id]) }}">
-                                    {{ $attribute->key }}
+                                    {{ $attribute->slug }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ route('admin.attribute.attribute.edit', [$attribute->id]) }}">
+                                    {{ $attribute->name }}
                                 </a>
                             </td>
                             <td>
@@ -57,18 +63,22 @@
                             </td>
                             <td>
                                 <a href="{{ route('admin.attribute.attribute.edit', [$attribute->id]) }}">
-                                    {{ $attribute->namespace }}
+                                    {{ $attribute->is_system ? trans('attribute::attributes.system.true') : trans('attribute::attributes.system.false') }}
                                 </a>
                             </td>
                             <td>
                                 <a href="{{ route('admin.attribute.attribute.edit', [$attribute->id]) }}">
-                                    {{ $attribute->has_translatable_values }}
+                                    {{ $attribute->is_enabled ? trans('attribute::attributes.enabled.true') : trans('attribute::attributes.enabled.false') }}
                                 </a>
                             </td>
                             <td>
                                 <div class="btn-group">
                                     <a href="{{ route('admin.attribute.attribute.edit', [$attribute->id]) }}" class="btn btn-default btn-flat"><i class="fa fa-pencil"></i></a>
-                                    <button class="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.attribute.attribute.destroy', [$attribute->id]) }}"><i class="fa fa-trash"></i></button>
+                                    @if(!$attribute->is_system)
+                                    <button class="btn btn-danger btn-flat" data-toggle="modal" data-target="#modal-delete-confirmation" data-action-target="{{ route('admin.attribute.attribute.destroy', [$attribute->id]) }}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

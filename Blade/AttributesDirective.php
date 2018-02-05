@@ -2,6 +2,7 @@
 
 namespace Modules\Attribute\Blade;
 
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Modules\Attribute\Contracts\AttributesInterface;
 use Modules\Attribute\Repositories\AttributeRepository;
 use Modules\Attribute\Repositories\AttributesManager;
@@ -35,6 +36,8 @@ final class AttributesDirective
     {
         $this->extractArguments($arguments);
 
+        $this->entity->createSystemAttributes();
+
         $attributes = $this->attribute->findByNamespace($this->namespace);
 
         return $this->renderForm($this->entity, $attributes);
@@ -56,11 +59,24 @@ final class AttributesDirective
         $view = $view ?: 'attribute::admin.blade.form';
 
         $form = '';
+        $translatableForm = '';
 
-        foreach ($attributes as $attribute) {
+        $normalAttributes = $attributes->where('has_translatable_values', false);
+        $translatableAttributes = $attributes->where('has_translatable_values', true);
+
+        foreach ($normalAttributes as $attribute) {
             $form .= $this->attributesManager->getEntityFormField($attribute, $entity);
         }
 
-        return view($view, compact('namespace', 'form'));
+        foreach ($translatableAttributes as $attribute) {
+            foreach(LaravelLocalization::getSupportedLanguagesKeys() as $i => $locale) {
+                $active = locale() == $locale ? 'active' : '';
+                $translatableForm .= "<div class='tab-pane $active' id='tab_attributes_$i'>";
+                $translatableForm .= $this->attributesManager->getTranslatableEntityFormField($attribute, $entity, $locale);
+                $translatableForm .= '</div>';
+            }
+        }
+
+        return view($view, compact('entity', 'form', 'translatableForm'));
     }
 }

@@ -58,4 +58,11 @@ class TestModel implements AttributesInterface
     {
         return false;
     }
+
+    public function getEntityName()
+    {
+        return '';
+    }
+
+    public function createSystemAttributes() { }
 }

@@ -1,15 +1,15 @@
-<div class="form-group {{ $errors->has('attributes.' . $attribute->key) ? 'has-error' : '' }}">
+<div class="form-group {{ $errors->has('attributes.' . $attribute->slug) ? 'has-error' : '' }}">
     {!! Form::label($attribute->name, $attribute->name) !!}
 
     <?php foreach ($attribute->options as $key => $option): ?>
     <label class="checkbox">
-        <input type="checkbox" name="attributes[{{ $attribute->key }}][]"
+        <input type="checkbox" name="attributes[{{ $attribute->slug }}][]"
                 class="flat-blue"
-                data-key="{{ $attribute->key }}"
+                data-slug="{{ $attribute->slug }}"
                 data-is-collection="{{ $attribute->isCollection() }}"
-                value="{{ $key }}" {{ $entity->findAttributeValue($attribute->key, $key) ? 'checked' : '' }}>
-        {{ $option->translate(locale())->label }}
+                value="{{ $key }}" {{ $entity->findAttributeValue($attribute->slug, $key) ? 'checked' : '' }}>
+        {{ $option->getLabel() }}
     </label>
     <?php endforeach; ?>
-    {!! $errors->first('attributes.' . $attribute->key, '<span class="help-block">:message</span>') !!}
+    {!! $errors->first('attributes.' . $attribute->slug, '<span class="help-block">:message</span>') !!}
 </div>

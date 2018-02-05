@@ -13,13 +13,12 @@ class Attribute extends Model
     protected $table = 'attribute__attributes';
     public $translatedAttributes = ['name', 'description'];
     protected $fillable = [
-        'name',
-        'description',
+        'slug',
         'namespace',
-        'key',
         'type',
-        'is_enabled',
         'has_translatable_values',
+        'is_enabled',
+        'is_system',
     ];
     protected $appends = [
         'options'
@@ -33,19 +32,6 @@ class Attribute extends Model
     public function options()
     {
         return $this->hasMany(AttributeOption::class);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fill(array $attributes)
-    {
-        if (isset($attributes['options']))
-        {
-            $this->setOptions($attributes['options']);
-        }
-
-        return parent::fill($attributes);
     }
 
     /**
@@ -101,6 +87,16 @@ class Attribute extends Model
     public function isCollection()
     {
         return $this->getTypeInstance()->isCollection();
+    }
+
+    /**
+     * Check if the current attributes has options
+     * @return bool
+     */
+    public function getEntityName()
+    {
+        $namespaces = app(AttributesManager::class)->getEntities();
+        return isset($namespaces[$this->namespace]) ? $namespaces[$this->namespace]->getEntityName() : $this->namespace;
     }
 
 }

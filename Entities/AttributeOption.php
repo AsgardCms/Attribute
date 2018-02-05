@@ -22,4 +22,10 @@ final class AttributeOption extends Model
         return $this->belongsTo(Attribute::class);
     }
 
+    public function getLabel($locale = null)
+    {
+        $locale = $locale ? $locale : locale();
+        return $this->hasTranslation($locale) ? $this->translate($locale)->label : $this->key;
+    }
+
 }

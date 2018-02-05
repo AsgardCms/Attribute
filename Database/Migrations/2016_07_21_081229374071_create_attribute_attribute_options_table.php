@@ -24,6 +24,7 @@ class CreateAttributeAttributeOptionsTable extends Migration
             $table->index('attribute_id');
             $table->index('key');
             $table->unique(['attribute_id', 'key']);
+            $table->foreign('attribute_id')->references('id')->on('attribute__attributes')->onDelete('cascade');
         });
 
         Schema::create('attribute__attribute_option_translations', function (Blueprint $table) {

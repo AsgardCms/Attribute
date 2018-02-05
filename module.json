@@ -3,7 +3,7 @@
     "alias": "attribute",
     "description": "",
     "keywords": [],
-    "version": "0.2.0",
+    "version": "0.3.0",
     "active": 1,
     "order": 1,
     "providers": [
@@ -12,8 +12,7 @@
     ],
     "aliases": {
         "OptionsNormaliser": "Modules\\Attribute\\Facades\\OptionsNormaliser",
-        "AttributesDirective": "Modules\\Attribute\\Blade\\Facades\\AttributesDirective",
-        "TranslatableAttributesDirective": "Modules\\Attribute\\Blade\\Facades\\TranslatableAttributesDirective"
+        "AttributesDirective": "Modules\\Attribute\\Blade\\Facades\\AttributesDirective"
     },
     "files": []
 }

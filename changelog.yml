@@ -1,0 +1,12 @@
+url: https://github.com/laraplug/attribute-module
+versions:
+    "0.3.0":
+        added:
+            - Add README.md
+            - Support $systemAttribute to add attribute on code-level
+    "0.2.0":
+        changed:
+            - Fixed view errors on directive
+    "0.1.0":
+        added:
+            - Initial Release

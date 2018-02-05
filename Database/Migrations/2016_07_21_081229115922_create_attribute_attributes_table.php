@@ -17,13 +17,14 @@ class CreateAttributeAttributesTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('namespace');
-            $table->string('key');
+            $table->string('slug');
             $table->string('type');
-            $table->boolean('is_enabled');
             $table->boolean('has_translatable_values');
+            $table->boolean('is_enabled');
+            $table->boolean('is_system');
             $table->timestamps();
 
-            $table->unique(['namespace', 'key']);
+            $table->unique(['namespace', 'slug']);
         });
 
         Schema::create('attribute__attribute_translations', function (Blueprint $table) {

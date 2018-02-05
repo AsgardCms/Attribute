@@ -9,24 +9,23 @@ use Modules\Attribute\Entities\Attribute;
 final class AttributesManagerRepository implements AttributesManager
 {
     /**
-     * Array of registered namespaces.
      * @var array
      */
-    private $namespaces = [];
+    private $entities = [];
 
     /**
-     * Array of registered types.
      * @var array
      */
     private $types = [];
 
-    /**
-     * Returns all the registered namespaces.
-     * @return array
-     */
     public function getNamespaces()
     {
-        return $this->namespaces;
+        return array_keys($this->entities);
+    }
+
+    public function getEntities()
+    {
+        return $this->entities;
     }
 
     /**
@@ -34,9 +33,9 @@ final class AttributesManagerRepository implements AttributesManager
      * @param AttributesInterface $entity
      * @return void
      */
-    public function registerNamespace(AttributesInterface $entity)
+    public function registerEntity(AttributesInterface $entity)
     {
-        $this->namespaces[] = $entity->getEntityNamespace();
+        $this->entities[$entity->getEntityNamespace()] = $entity;
     }
 
     /**

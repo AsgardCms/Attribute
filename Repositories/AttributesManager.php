@@ -9,17 +9,23 @@ use Modules\Attribute\Entities\Attribute;
 interface AttributesManager
 {
     /**
-     * Returns all the registered namespaces.
+     * Returns all the registered entity namespaces.
      * @return array
      */
     public function getNamespaces();
+
+    /**
+     * Returns all the registered entity.
+     * @return array
+     */
+    public function getEntities();
 
     /**
      * Registers an entity namespace.
      * @param AttributesInterface $entity
      * @return void
      */
-    public function registerNamespace(AttributesInterface $entity);
+    public function registerEntity(AttributesInterface $entity);
 
     /**
      * Return all registered types

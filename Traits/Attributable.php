@@ -3,10 +3,11 @@
 namespace Modules\Attribute\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Modules\Attribute\Entities\Attribute;
 use Modules\Attribute\Entities\AttributeValue;
 
-trait AttributableTrait
+trait Attributable
 {
     /**
      * @var Model
@@ -38,6 +39,14 @@ trait AttributableTrait
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getEntityName()
+    {
+        return get_called_class();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function attributes()
@@ -59,31 +68,31 @@ trait AttributableTrait
 
     /**
      * Get attribute's value (or check if value exists)
-     * @param  string  $key   Attribute Key
+     * @param  string  $slug   Attribute Key
      * @param  string|null  $value Value (Use this variable when checking collectioin type value saved)
      * @return array|null
      */
-    public function findAttributeValue($key, $value = null)
+    public function findAttributeValue($slug, $value = null)
     {
         return $this->values()
                     ->when(!is_null($value), function ($query) use ($value) {
                         return $query->where('content', $value);
                     })
-                    ->whereHas('attribute', function($query) use ($key) {
-                        $query->where('key', $key);
+                    ->whereHas('attribute', function($query) use ($slug) {
+                        $query->where('slug', $slug);
                     })
                     ->first();
     }
 
     /**
      * Get AttributeValue's content directly (supports translation option)
-     * @param  [type] $key    [description]
-     * @param  [type] $locale [description]
-     * @return [type]         [description]
+     * @param  string $slug
+     * @param  string $locale
+     * @return string
      */
-    public function findAttributeValueContent($key, $locale = null)
+    public function findAttributeValueContent($slug, $locale = null)
     {
-        if($attributeValue = $this->findAttributeValue($key)) {
+        if($attributeValue = $this->findAttributeValue($slug)) {
             if($locale) {
                 return $attributeValue->hasTranslation($locale) ? $attributeValue->getTranslation($locale)->content : '';
             }
@@ -92,13 +101,17 @@ trait AttributableTrait
         return null;
     }
 
+    /**
+     * Set Attributes
+     * @param array $attributes
+     */
     public function setAttributes(array $attributes = [])
     {
-        foreach ($attributes as $key => $contents) {
-            if(is_null($contents)) continue;
+        foreach ($attributes as $slug => $contents) {
+            if(empty($slug) || empty($contents)) continue;
             // Find attribute by its key
-            $attribute = $this->attributes()->where('key', $key)->first();
-            // If attribute doesn't exist, reject saving
+            $attribute = $this->attributes()->where('slug', $slug)->first();
+            // If attribute doesn't exist, check if it is dynamicAttribute
             if ($attribute === null) {
                 continue;
             }
@@ -185,4 +198,69 @@ trait AttributableTrait
     {
         return $this->attributes()->where('has_translatable_values', true)->count();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSystemAttributes()
+    {
+        return isset(static::$systemAttributes) ? collect(static::$systemAttributes) : collect([]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createSystemAttributes()
+    {
+        $systemAttributes = $this::getSystemAttributes();
+        $attributes = $this->attributes()->get()->keyBy('slug');
+        $systemAttributeIds = [];
+        foreach ($systemAttributes as $slug => $config) {
+            $config = collect($config);
+            if(!$slug || !$config->has('type')) continue;
+            // If attributes is not in database
+            if(isset($attributes[$slug])) {
+                $attribute = $attributes[$slug];
+                $attribute->type = $config->get('type');
+                $attribute->has_translatable_values = $config->get('has_translatable_values', false);
+                $attribute->save();
+            }
+            else {
+                // Create Attribute based on system attribustes
+                $attributeData = [
+                    'namespace' => $this->getEntityNamespace(),
+                    'slug' => $slug,
+                    'type' => $config->get('type'),
+                    'has_translatable_values' => $config->get('has_translatable_values', false),
+                    'is_enabled' => true,
+                    'is_system' => true,
+                ];
+                foreach (LaravelLocalization::getSupportedLanguagesKeys() as $locale) {
+                    $attributeData[$locale]['name'] = $slug;
+                }
+                $attribute = new Attribute($attributeData);
+                $attribute->save();
+            }
+
+            // Save Options
+            if($options = $config->get('options')) {
+                $optionData = [];
+                foreach ($options as $key => $value) {
+                    if(is_string($value)) {
+                        $key = $value;
+                        $value = [];
+                    }
+                    $optionData[$key] = $value;
+                    foreach (LaravelLocalization::getSupportedLanguagesKeys() as $locale) {
+                        if(!isset($optionData[$key][$locale]))
+                            $optionData[$key][$locale]['label'] = $key;
+                    }
+                }
+                $attribute->setOptions($optionData);
+            }
+            $systemAttributeIds[] = $attribute->getKey();
+        }
+        $this->attributes()->whereNotIn('id', $systemAttributeIds)->update(['is_system'=>false]);
+    }
+
 }

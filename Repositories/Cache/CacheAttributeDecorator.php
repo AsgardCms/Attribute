@@ -30,19 +30,4 @@ class CacheAttributeDecorator extends BaseCacheDecorator implements AttributeRep
             );
     }
 
-    /**
-     * Find all enabled attributes by the given namespace that have translatable values
-     * @param string $namespace
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function findTranslatableByNamespace($namespace)
-    {
-        return $this->cache
-            ->tags([$this->entityName, 'global'])
-            ->remember("{$this->locale}.{$this->entityName}.findTranslatableByNamespace.{$namespace}", $this->cacheTime,
-                function () use ($namespace) {
-                    return $this->repository->findTranslatableByNamespace($namespace);
-                }
-            );
-    }
 }

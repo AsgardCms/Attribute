@@ -98,10 +98,10 @@ class AttributeServiceProvider extends ServiceProvider
             return;
         }
         $this->app['blade.compiler']->directive('attributes', function ($value) {
-            return "<?php echo AttributesDirective::show(array$value); ?>";
+            return "<?php echo AttributesDirective::show([$value]); ?>";
         });
         $this->app['blade.compiler']->directive('translatableAttributes', function ($value) {
-            return "<?php echo TranslatableAttributesDirective::show(array$value); ?>";
+            return "<?php echo TranslatableAttributesDirective::show([$value]); ?>";
         });
     }
 }

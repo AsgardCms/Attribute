@@ -39,5 +39,11 @@ interface TypeInterface
      * Returns boolean for whether the type allows to use options.
      * @return bool
      */
-    public function allowOptions();
+    public function useOptions();
+    
+    /**
+     * Returns boolean for whether the type is collection.
+     * @return bool
+     */
+    public function isCollection();
 }

@@ -18,7 +18,13 @@ abstract class BaseType implements TypeInterface
      * Can this type have additional options.
      * @var bool
      */
-    protected $allowOptions = false;
+    protected $useOptions = false;
+
+    /**
+     * True if this type value is collection.
+     * @var bool
+     */
+    protected $isCollection = false;
 
     /**
      * {@inheritDoc}
@@ -55,8 +61,16 @@ abstract class BaseType implements TypeInterface
     /**
      * {@inheritDoc}
      */
-    public function allowOptions()
+    public function useOptions()
     {
-        return $this->allowOptions;
+        return $this->useOptions;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isCollection()
+    {
+        return $this->isCollection;
     }
 }

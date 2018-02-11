@@ -32,4 +32,5 @@ return [
     ],
     'name is required' => 'Name is required',
     'slug is required' => 'Slug is required',
+    'key already exists' => 'Key already exists.',
 ];

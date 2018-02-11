@@ -2,6 +2,12 @@
 
 namespace Modules\Attribute\Tests;
 
+use Collective\Html\FormFacade;
+use Collective\Html\HtmlFacade;
+use Collective\Html\HtmlServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+use Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Modules\Attribute\Providers\AttributeServiceProvider;
 use Modules\Core\Providers\CoreServiceProvider;
 use Nwidart\Modules\LaravelModulesServiceProvider;
@@ -22,6 +28,18 @@ abstract class BaseTestCase extends TestCase
             LaravelModulesServiceProvider::class,
             CoreServiceProvider::class,
             AttributeServiceProvider::class,
+            LaravelLocalizationServiceProvider::class,
+            HtmlServiceProvider::class,
+        ];
+    }
+
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Eloquent' => Model::class,
+            'LaravelLocalization' => LaravelLocalization::class,
+            'Form' => FormFacade::class,
+            'Html' => HtmlFacade::class,
         ];
     }
 

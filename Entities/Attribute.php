@@ -25,7 +25,7 @@ class Attribute extends Model
 
     public function values()
     {
-        return $this->hasMany(Value::class);
+        return $this->hasMany(AttributeValue::class);
     }
 
     /**
@@ -33,7 +33,10 @@ class Attribute extends Model
      */
     public function setOptionsAttribute($options)
     {
-        $this->attributes['options'] = count($options) > 1 ? json_encode($options) : '';
+        $filtered = collect($options)->filter(function ($value, $key) {
+            return !!$key;
+        });
+        $this->attributes['options'] = $filtered->isNotEmpty() ? $filtered->toJson() : '';
     }
 
     /**
@@ -45,14 +48,28 @@ class Attribute extends Model
         return $options ? json_decode($options, true) : [];
     }
 
+    public function getTypeInstance()
+    {
+        $types = app(AttributesManager::class)->getTypes();
+        return isset($types[$this->type]) ? $types[$this->type] : null;
+    }
+
     /**
      * Check if the current attributes has options
      * @return bool
      */
-    public function hasOptions()
+    public function useOptions()
     {
-        $type = app(AttributesManager::class)->getTypes()[$this->type];
-
-        return $type->allowOptions();
+        return $this->getTypeInstance()->useOptions();
     }
+    
+    /**
+     * Check if the current attributes has options
+     * @return bool
+     */
+    public function isCollection()
+    {
+        return $this->getTypeInstance()->isCollection();
+    }
+
 }

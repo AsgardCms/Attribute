@@ -9,4 +9,10 @@ interface AttributesInterface
      * @var string
      */
     public static function getEntityNamespace();
+    
+    /**
+     * Check if this entitiy has translatable Attribute.
+     * @var int
+     */
+    public function hasTranslatableAttribute();
 }
